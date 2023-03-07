@@ -5,11 +5,11 @@ Import-Module -Name ImportExcel
 $hostname = hostname
 
 # Get the computer's IP address
-$ipaddress = (Get-NetIPAddress | Where-Object {$_.InterfaceAlias -eq 'Wi-Fi' -and $_.AddressFamily -eq 'IPv4'}).IPAddress
+$gateway = '172.17.2.254'
+$ipaddress = Get-NetIPConfiguration | Where-Object {$_.IPv4DefaultGateway.NextHop -eq $gateway} | Select-Object -ExpandProperty IPv4Address | Select-Object -ExpandProperty IPAddress
 
 # Get the computer's MAC address
 $macaddress = (Get-NetAdapter | Where-Object {$_.InterfaceAlias -eq 'Wi-Fi'}).MacAddress
-
 # Prompt the user to enter a description for the computer
 $description = Read-Host 'Enter a description for the computer'
 
@@ -22,7 +22,7 @@ $computer = [PSCustomObject]@{
 }
 
 # Define the path and name of the Excel file to append the information to
-$excelFilePath = '[INPUT_LOCATION]\ComputerInfo.xlsx'
+$excelFilePath = 'ComputerInfo.xlsx'
 
 # Append the computer information to the Excel file
 $computer | Export-Excel -Path $excelFilePath -WorksheetName 'ComputerInfo' -AutoSize -Append -TableStyle 'Medium15'
