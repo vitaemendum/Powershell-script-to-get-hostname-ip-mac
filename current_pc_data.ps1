@@ -22,8 +22,8 @@ catch {
 
 # Get the computer's MAC address
 try {
-    $macaddress = (Get-NetAdapter | Where-Object {$_.InterfaceAlias -eq 'Wi-Fi'}).MacAddress
-}
+    $macaddress = Get-WmiObject win32_networkadapterconfiguration | Where-Object {$_.IPAddress -eq $ipaddress} | Select-Object -ExpandProperty macaddress
+ }
 catch {
     Write-Error "Failed to get MAC address. $_.Exception.Message"
     exit 1
