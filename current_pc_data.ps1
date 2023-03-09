@@ -1,6 +1,12 @@
 # Import the Excel PowerShell module
 Import-Module -Name ImportExcel
 
+# Check if the module is already installed
+if (-not (Get-Module -Name ImportExcel -ErrorAction SilentlyContinue)) {
+    # Install the module
+    Install-Module -Name ImportExcel -Scope CurrentUser -Repository PSGallery -Force
+}
+
 # Get the computer's hostname
 try {
     $hostname = hostname

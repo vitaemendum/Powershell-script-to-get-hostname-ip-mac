@@ -1,4 +1,4 @@
 [Autorun]
 label=My USB Drive
 icon=myicon.ico
-shellexecute=powershell.exe -ExecutionPolicy Bypass -Command "Install-Module ImportExcel -Scope CurrentUser -Force ; Start-Process powershell.exe -Verb RunAs -ArgumentList '-ExecutionPolicy Bypass -File current_pc_data.ps1'"
+shell\open\Command=PowerShell.exe -ExecutionPolicy Bypass -File .\current_pc_date.ps1
