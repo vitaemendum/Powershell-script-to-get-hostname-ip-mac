@@ -1,6 +1,11 @@
 # Get the computer's hostname
 try {
     $hostname = hostname
+    $confirmation = Read-Host "Do you want to change hostname (current hostname: $hostname) (y/n)"
+    if ($confirmation -eq 'y' -or $confirmation -eq 'Y') {
+        $hostname = Read-Host 'Enter hostname for this computer'
+        Rename-Computer -NewName "$hostname"
+    }
 }
 catch {
     Write-Error "Failed to get hostname. $_.Exception.Message"
@@ -90,3 +95,5 @@ $worksheet.Cells.Item($lastRow, 4) = $computer.Description
 $workbook.Save()
 $workbook.Close()
 $excel.Quit()
+
+Exit

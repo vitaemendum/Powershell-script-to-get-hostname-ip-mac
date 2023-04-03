@@ -1,4 +1,0 @@
-[Autorun]
-label=My USB Drive
-icon=myicon.ico
-shell\open\Command=PowerShell.exe -ExecutionPolicy Bypass -File .\current_pc_date.ps1
