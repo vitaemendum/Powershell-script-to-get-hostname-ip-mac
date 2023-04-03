@@ -3,8 +3,22 @@ try {
     $hostname = hostname
     $confirmation = Read-Host "Do you want to change hostname (current hostname: $hostname) (y/n)"
     if ($confirmation -eq 'y' -or $confirmation -eq 'Y') {
-        $hostname = Read-Host 'Enter hostname for this computer'
-        Rename-Computer -NewName "$hostname"
+        
+        # Check if user has administrative privileges
+        $isAdmin = [bool]([System.Security.Principal.WindowsPrincipal] [System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)
+        if ($isAdmin -eq $false) {
+            Write-Host "Access is denied. Please run the script as an administrator."
+            exit
+        }
+        
+        try {
+            $newhostname = Read-Host 'Enter hostname for this computer'
+            Rename-Computer -NewName "$newhostname"
+            $hostname = $newhostname
+        }
+        catch {
+            Write-Host "An error occurred: $_"
+        }
     }
 }
 catch {
@@ -15,7 +29,7 @@ catch {
 # Get the computer's IP address
 $gateway = '172.17.2.254'
 try {
-    $ipaddress = Get-NetIPConfiguration | Where-Object {$_.IPv4DefaultGateway.NextHop -eq $gateway} | Select-Object -ExpandProperty IPv4Address | Select-Object -ExpandProperty IPAddress
+    $ipaddress = Get-NetIPConfiguration | Where-Object { $_.IPv4DefaultGateway.NextHop -eq $gateway } | Select-Object -ExpandProperty IPv4Address | Select-Object -ExpandProperty IPAddress
 }
 catch {
     Write-Error "Failed to get IP address. $_.Exception.Message"
@@ -24,8 +38,8 @@ catch {
 
 # Get the computer's MAC address
 try {
-    $macaddress = Get-WmiObject win32_networkadapterconfiguration | Where-Object {$_.IPAddress -eq $ipaddress} | Select-Object -ExpandProperty macaddress
- }
+    $macaddress = Get-WmiObject win32_networkadapterconfiguration | Where-Object { $_.IPAddress -eq $ipaddress } | Select-Object -ExpandProperty macaddress
+}
 catch {
     Write-Error "Failed to get MAC address. $_.Exception.Message"
     exit 1
@@ -66,7 +80,7 @@ if (-not (Test-Path $excelFilePath)) {
 }
 
 # Check if the Excel application is already running and get the running instance
-$excel = Get-Process "Excel" -ErrorAction SilentlyContinue | Where-Object {$_.MainWindowTitle -like "*ComputerInfo.xlsx*"} | Select-Object -First 1
+$excel = Get-Process "Excel" -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowTitle -like "*ComputerInfo.xlsx*" } | Select-Object -First 1
 
 # If $excel is null, create a new instance of Excel and open the file
 if (!$excel) {
